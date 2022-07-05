@@ -40,7 +40,7 @@ void main() {
     q.y = fbm( st+vec2(c[2],c[3]) );
     vec2 r = vec2(0.);
 
-//play with the values here!
+    //play with the values here!
     r.x = fbm( st+ (3.0*mouse.x+0.4)*q+vec2(c[5],c[6]));
     r.y = fbm( st+ (6.0*mouse.y+0.5)*q*sin(.01*iTime)+vec2(c[8]*.05*iTime,c[9]));
     float f = fbm(st+c[10]*(r+length(q) ));

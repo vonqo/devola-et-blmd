@@ -1,61 +1,128 @@
-let libs = ["includes/libs/p5.glitch.js"];
-
 let fft;
+let music;
 let input;
-let glitch;
+let logo;
 
-let carpet;
-
-var bassEnergyRange = {
+let bassEnergyRange = {
   low: 130,
   high: 255
 };
 
-function preload() {
-  // font = loadFont('assets/BebasNeue-Regular.otf');
-  // carpet = loadImage('assets/carpet.jpg');
+let carpetShader;
+let carpetBase = 0;
+let newX = 0;
+let newY = 0;
+let oldX = 0;
+let oldY = 0;
+let img;
+let flip = 0;
+let pg;
+
+let isCarpetScene = true;
+
+function preload(){
+  // Load the shader
+  carpetShader = new p5.Shader(this._renderer, vert, frag);
+
+  // Load the image
+  img = loadImage("assets/carpet.jpg");
 }
 
 function setup() {
-  createCanvas(300, 300);
-  background(0);
+  // shaders require WEBGL mode to work
+  createCanvas(1920, 1080, WEBGL);
+  pg = createGraphics(width, height);
+  if (flip == 1){
+    pg.scale(1, -1);
+    pg.image(img, 0, -height, width, height);
+  }else{
+    pg.image(img, 0, 0, width, height);
+  }
+  mouseX = width / 4;
+  mouseY = height / 4;
   
   input = new p5.AudioIn();
   input.start();
-  
   fft = new p5.FFT(0.8, 256);
   fft.setInput(input);
-  
-  imageMode(CENTER);
-  glitch = new Glitch();
-  loadImage('assets/carpet.jpg', function(im){
-    glitch.loadImage(im);
-  });
 }
 
-
-function draw() {
+function draw() { 
   let spectrum = fft.analyze();
   
-  let bass = fft.getEnergy("bass");
-  let energyBass = map(bass, bassEnergyRange.low, bassEnergyRange.high, 0, width, true);
-  
-  drawCarpet();
+  if(isCarpetScene) {
+    // "bass", "lowMid", "mid", "highMid", "treble"
+    let bass = fft.getEnergy("lowMid");
+    let energyBass = map(bass, bassEnergyRange.low, bassEnergyRange.high, 0, 20, true);
+    drawCarpetScene(energyBass);
+  } else {
+    // "bass", "lowMid", "mid", "highMid", "treble"
+    let bass = fft.getEnergy("bass");
+    let energyBass = map(bass, bassEnergyRange.low, bassEnergyRange.high, 0, width, true);
+    drawTextScene(energyBass);
+  }
 }
 
-function drawCarpet() {
-  glitch.resetBytes();
+function drawCarpetScene(energyBass) {
+  if (frameCount % 100 == 0){
+    newX = random(width);
+    newY = random(height);
+  }
+  if (newX > oldX) { mouseX-=1 }
+  if (newX < oldX) { mouseX+=1 }
+  if (newY > oldY) { oldY-=1 }
+  if (newY < oldY) { mouseY+=1 }
   
-  glitch.replaceBytes(100, 104); // swap all decimal byte 100 for 104
-  glitch.randomBytes(1); // add one random byte for movement
+  // shader() sets the active shader with our shader
+  shader(carpetShader);
+  
+  //const mx = map(mouseX, 0, width, 0, 100);
+  //const my = map(mouseY, 0, height, 0, 100);
+  
+  const mx = map(mouseX, 0, width, 0, (energyBass + 180) * 1.5);
+  const my = map(mouseY, 0, height, 0, (energyBass + 180));
+  
+  //const mx = (energyBass * 1.5) + carpetBase;
+  //const my = (energyBass) + carpetBase;
+  
+  console.log();
+  
+  // Send the image to the shader
+  carpetShader.setUniform("uTexture", pg);
+  carpetShader.setUniform("uScale", [mx, my]);
 
-  glitch.buildImage();
-  image(glitch.image, width/2, height/2);
+  // rect gives us some geometry on the screen
+  rect(0,0,width, height);
+}
+
+function drawTextScene(energyBass) {
+  background(0);
+}
+
+function mousePressed() {
+  userStartAudio();
 }
 
 function keyTyped() {
-  if(key === '0') {
+  //if(isCarpetScene) {
+  //  if(key === '1') {
+  //    carpetBase += 1;
+  //  } if(key === '2') {
+  //    if(carpetBase > 0) {
+  //      carpetBase -= 1;
+  //    }
+  //  }
+  //}
+}
+
+function keyPressed() {
+  if(key === 'q') {
+    isCarpetScene = true;
+  } else if(key === 'w') {
+    isCarpetScene = false;
+  } else if(key === '0') {
     let fs = fullscreen();
     fullscreen(!fs);
   }
 }
+ 

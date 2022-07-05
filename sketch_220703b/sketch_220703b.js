@@ -3,7 +3,7 @@ let noctaves;
 let colors;
 let font;
 
-var bassEnergyRange = {
+let bassEnergyRange = {
   low: 130,
   high: 255
 };
@@ -58,7 +58,7 @@ const clr = [
 ];
 
 function initColors() {
-  for (var i = 0; i < 120; i++) {
+  for (var i = -10; i < 10; i++) {
     colors[i] = i;
     // colors[i] = random(-10, 40);
     // colors[i] = random(-20, 200);
