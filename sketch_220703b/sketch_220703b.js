@@ -1,7 +1,10 @@
 let gl;
 let noctaves;
 let colors;
+let colors2;
 let font;
+
+let colorPallete = 1;
 
 let bassEnergyRange = {
   low: 130,
@@ -49,21 +52,38 @@ const clr = [
     clrAlpha: 255
   },
   {
-    /// purple
-    clrRed: 96,
-    clrGreen: 2,
-    clrBlue: 204,
+    /// yellow
+    clrRed: 247,
+    clrGreen: 240,
+    clrBlue: 27,
+    clrAlpha: 255
+  },
+  {
+    /// teal
+    clrRed: 64,
+    clrGreen: 255,
+    clrBlue: 172,
+    clrAlpha: 255
+  },
+  {
+    /// blue
+    clrRed: 0,
+    clrGreen: 61,
+    clrBlue: 153,
     clrAlpha: 255
   }
 ];
 
 function initColors() {
-  for (var i = -30; i < 110; i++) {
+  for (let i = -30; i < 110; i++) {
     colors[i] = i;
     // colors[i] = random(-10, 40);
     // colors[i] = random(-20, 200);
   }
-}
+  for (let e = -110; e < 30; e++) {
+    colors2[e] = e;
+  }
+ }
 
 function preload() {
   // music = loadSound('bg_music.mp3');
@@ -82,6 +102,8 @@ function setup() {
   
   noctaves = 1.5;
   colors = [];
+  colors2 = [];
+  
   initColors();
   test = new p5.Shader(this._renderer, vert, frag); //shaders are loaded
   shader(test); //shaders are applied
@@ -115,11 +137,19 @@ function draw() {
   test.setUniform('iMouse', [energyBass, 0]);
   test.setUniform("noctaves", noctaves);
   test.setUniform("c", colors);
+  
+  //if(colorPallete == 1) {
+  //  console.log("1");
+  //  test.setUniform("c", colors);
+  //} else if(colorPallete == 2) {
+  //  console.log("2");
+  //  test.setUniform("c", colors2);
+  //}
+  
   shader(test);
   box(width, height);
   
   drawLogo(logoSize);
-  // drawLogo(logoMaxSize);
   drawText();
 }
 
@@ -157,6 +187,14 @@ function keyTyped() {
     clrIndex = 2;
   } else if(key === 'r') {
     clrIndex = 3;
+  } else if(key === 't') {
+    clrIndex = 4;
+  } else if(key === 'y') {
+    clrIndex = 5;
+  } else if(key === 'a') {
+    colorPallete = 1;
+  } else if(key === 's') {
+    colorPallete = 2; 
   }
   
   if(key === '1') {

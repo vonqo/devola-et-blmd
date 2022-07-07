@@ -1,3 +1,4 @@
+let gl;
 let fft;
 let music;
 let input;
@@ -54,7 +55,12 @@ function setup() {
   fft = new p5.FFT(0.8, 256);
   fft.setInput(input);
   
+  gl = this.canvas.getContext('webgl');
+  gl.disable(gl.DEPTH_TEST);
+  
+  imageMode(CENTER);
   textAlign(CENTER, CENTER);
+  textFont(fontMedium);
 }
 
 function draw() { 
@@ -66,9 +72,7 @@ function draw() {
     let mapSize = 11 + (carpetBase * 1.5);
     
     let energyBass = map(bass, bassEnergyRange.low, bassEnergyRange.high, 0, 13, true);
-    drawCarpetText();
     drawCarpetScene(energyBass);
-    drawCarpetText();
   } else {
     // "bass", "lowMid", "mid", "highMid", "treble"
     let bass = fft.getEnergy("bass");
@@ -95,8 +99,6 @@ function drawCarpetScene(energyBass) {
   if (newY > oldY) { oldY-=1 }
   if (newY < oldY) { mouseY+=1 }
   
-  // shader() sets the active shader with our shader
-  shader(carpetShader);
   
   //const mx = map(mouseX, 0, width, 0, 100);
   //const my = map(mouseY, 0, height, 0, 100);
@@ -107,17 +109,20 @@ function drawCarpetScene(energyBass) {
   // Send the image to the shader
   carpetShader.setUniform("uTexture", pg);
   carpetShader.setUniform("uScale", [mx, my]);
+  
+  // shader() sets the active shader with our shader
+  shader(carpetShader);
 
   // rect gives us some geometry on the screen
   rect(width, height);
   // box(width, height);
+  drawCarpetText();
 }
 
 function drawCarpetText() {
-  textFont(fontMedium);
   textSize(120);
-  fill(255, 255, 0, 255);
-  text('B.L.M.D', 0, 0);
+  fill(255, 255, 255, 255);
+  text('B.L.M.D', -50, 50);
 }
 
 function drawTextScene(energyBass) {
