@@ -58,7 +58,7 @@ const clr = [
 ];
 
 function initColors() {
-  for (var i = -10; i < 10; i++) {
+  for (var i = -30; i < 110; i++) {
     colors[i] = i;
     // colors[i] = random(-10, 40);
     // colors[i] = random(-20, 200);
@@ -74,7 +74,6 @@ function preload() {
 function setup() {
   createCanvas(1920, 1080, WEBGL);
   
-  textFont(font);
   input = new p5.AudioIn();
   input.start();
   
@@ -91,13 +90,14 @@ function setup() {
   fft.setInput(input);
   
   logoHeight = -(43);
-  titleHeight = -(height / 2.3);
-  titleSize = height / 9;
-  logoMaxSize = height / 1.15;
+  titleHeight = -(height / 2.4);
+  titleSize = 210;
+  logoMaxSize = height / 0.8;
   logoMinSize = height / 1.5;
   
   imageMode(CENTER);
   textAlign(CENTER, CENTER);
+  textFont(font);
   textSize(titleSize);
   // music.play();
 }
@@ -109,7 +109,6 @@ function draw() {
   let bass = fft.getEnergy("bass");
   let energyBass = map(bass, bassEnergyRange.low, bassEnergyRange.high, 0, width, true);
   let logoSize = map(bass, bassEnergyRange.low, bassEnergyRange.high, logoMinSize, logoMaxSize, true);
-  console.log(energyBass);
   
   test.setUniform("iResolution", [width, height]); //pass some values to the shader
   test.setUniform("iTime", millis() * 0.001);
@@ -120,6 +119,7 @@ function draw() {
   box(width, height);
   
   drawLogo(logoSize);
+  // drawLogo(logoMaxSize);
   drawText();
 }
 
@@ -130,11 +130,12 @@ function drawLogo(sz) {
     clr[clrIndex].clrBlue, 
     clr[clrIndex].clrAlpha
   );
-  image(logo, 0, logoHeight, sz, sz);
+  // image(logo, 0, logoHeight, sz, sz);
+  image(logo, 0, 0, sz, sz);
 }
 
 function drawText() {
-  text('EVEN TIDE', 0, titleHeight);
+  text('EVEN TIDE', -600, titleHeight);
   fill(
     clr[clrIndex].clrRed, 
     clr[clrIndex].clrGreen, 
