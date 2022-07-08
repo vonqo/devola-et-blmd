@@ -60,7 +60,6 @@ function setup() {
   
   imageMode(CENTER);
   textAlign(CENTER, CENTER);
-  textFont(fontMedium);
 }
 
 function draw() { 
@@ -72,7 +71,8 @@ function draw() {
     let mapSize = 11 + (carpetBase * 1.5);
     
     let energyBass = map(bass, bassEnergyRange.low, bassEnergyRange.high, 0, 13, true);
-    drawCarpetScene(energyBass);
+    let energyBassFont = map(bass, bassEnergyRange.low, bassEnergyRange.high, 0, 50, true);
+    drawCarpetScene(energyBass, energyBassFont);
   } else {
     // "bass", "lowMid", "mid", "highMid", "treble"
     let bass = fft.getEnergy("bass");
@@ -81,7 +81,7 @@ function draw() {
   }
 }
 
-function drawCarpetScene(energyBass) {
+function drawCarpetScene(energyBass, energyBassFont) {
   if(keyIsDown(RIGHT_ARROW)) {
     carpetBase += 1;
   } if(keyIsDown(LEFT_ARROW)) {
@@ -112,22 +112,28 @@ function drawCarpetScene(energyBass) {
   
   // shader() sets the active shader with our shader
   shader(carpetShader);
-
+  // drawCarpetText(energyBassFont);
   // rect gives us some geometry on the screen
   rect(width, height);
   // box(width, height);
-  drawCarpetText();
+  drawCarpetText(energyBassFont);
 }
 
-function drawCarpetText() {
-  textSize(120);
+function drawCarpetText(energyBassFont) {
+  textFont(fontMedium);
+  textSize(150 + energyBassFont);
+  stroke(0, 255, 0);
+  strokeWeight(50);
   fill(255, 255, 255, 255);
-  text('B.L.M.D', -50, 50);
+  text('B.L.M.D', 0, -400);
 }
 
-function drawTextScene(energyBass) {
+function drawTextScene(energyBassFont) {
   background(0);
-  drawCarpetText();
+  textFont(fontMedium);
+  textSize(150);
+  fill(255, 255, 255, 255);
+  text('B.L.M.D', 0, -400);
 }
 
 function mousePressed() {
