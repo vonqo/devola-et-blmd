@@ -4,6 +4,8 @@
 
 Real time music visualization piece for Even Tide and BLMD performance for Playtime 2022 Music Festival.
 
+This repository is a part of [ColorNoteCode](https://github.com/PunkOwl/gestalt) project
+
 ## Licence
 - Mozilla Public License v2. vonqo
 
